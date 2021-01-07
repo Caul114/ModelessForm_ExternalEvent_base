@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelessForm_ExternalEvent", "ModelessForm_ExternalEvent\ModelessForm_ExternalEvent.csproj", "{1A9C6E8F-CC75-41D4-B239-FEB51733840C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Test|Any CPU = Test|Any CPU
+		Test|x64 = Test|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Debug|x64.ActiveCfg = Debug|x64
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Debug|x64.Build.0 = Debug|x64
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Release|x64.ActiveCfg = Release|x64
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Release|x64.Build.0 = Release|x64
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Test|Any CPU.Build.0 = Test|Any CPU
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Test|x64.ActiveCfg = Test|x64
+		{1A9C6E8F-CC75-41D4-B239-FEB51733840C}.Test|x64.Build.0 = Test|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3C40396C-5686-4AD3-BCE5-E9FE87112A38}
+	EndGlobalSection
+EndGlobal
