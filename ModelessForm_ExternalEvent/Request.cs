@@ -34,9 +34,13 @@ namespace ModelessForm_ExternalEvent
         /// </summary>
         None = 0,
         /// <summary>
-        /// "Picker" request
+        /// "Initial" request
         /// </summary>
-        Id = 1,
+        Initial = 1,
+        /// <summary>
+        /// "ComboBox" request
+        /// </summary>
+        ChangeComboBox = 2,
     }
 
     /// <summary>

@@ -24,6 +24,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
@@ -42,8 +43,26 @@ namespace ModelessForm_ExternalEvent
         // Il valore dell'ultima richiesta effettuata dal modulo non modale
         private Request m_request = new Request();
 
-        // Un instanza della finestra di dialogo
-        private ModelessForm modelessForm;
+        // Dichiara un'istanza di questa classe
+        private ModelessForm _modelessForm;
+
+        // Path del file.txt
+        private string _pathTxt = "";
+
+        // Path del file.txt
+        private string _pathTxt2 = "";
+
+        // Valori della ComboBox
+        private List<string> _titles;
+
+        // Valori della ListBox
+        private List<string[]> _parameters;
+
+        // Valore stringa scelto dalla ComboBox
+        private string _selectemItemComboBox;
+
+        // Valori dei parametri da passare alla ListBOx
+        private ArrayList _listParameters;
         #endregion
 
         #region Class public property
@@ -54,6 +73,30 @@ namespace ModelessForm_ExternalEvent
         {
             get { return m_request; }
         }
+
+        /// <summary>
+        /// Proprietà pubblica per accedere al valore della richiesta corrente
+        /// </summary>
+        public List<string> ValuesForComboBox
+        {
+            get { return _titles; }
+        }
+
+        /// <summary>
+        /// Proprietà pubblica per accedere al valore della richiesta corrente
+        /// </summary>
+        public List<string[]> ValuesForListBox
+        {
+            get { return _parameters; }
+        }
+
+        /// <summary>
+        /// Proprietà pubblica per accedere al valore della richiesta corrente
+        /// </summary>
+        public ArrayList ListParameters
+        {
+            get { return _listParameters; }
+        }
         #endregion
 
         #region Class public method
@@ -63,6 +106,13 @@ namespace ModelessForm_ExternalEvent
         public RequestHandler()
         {
             // Costruisce i membri dei dati per le proprietà
+            _pathTxt = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) 
+                + @"\Esperimenti_Revit\ParameterGroups.txt";
+            _pathTxt2 = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+                 + @"\Esperimenti_Revit\ParameterGroups2.txt";
+            _titles = new List<string>();
+            _parameters = new List<string[]>();
+            _listParameters = new ArrayList();
         }
         #endregion
 
@@ -93,11 +143,30 @@ namespace ModelessForm_ExternalEvent
                         {
                             return;  // no request at this time -> we can leave immediately
                         }
-                    case RequestId.Id:
+                    case RequestId.Initial:
                         {
-                           
+                            // Cattura tutti i parametri 
+                            GetParameters(uiapp);
+                            // Cattura i valori
+                            ValueForComboBox();
+                            // Riempie la ComboBox
+                            _modelessForm = App.thisApp.RetriveForm();
+                            _modelessForm.SetComboBox();
                             break;
-                        } 
+                        }
+                    case RequestId.ChangeComboBox:
+                        {
+                            // Svuoto la list di parametri precedente
+                            _listParameters.Clear();
+                            // Ottiene l'elemento contenuto nella ComboBox
+                            _modelessForm = App.thisApp.RetriveForm();
+                            _selectemItemComboBox = _modelessForm.GetComboBox();
+                            // Metodo che ottine gli elementi da inserire nella ListBox
+                            _listParameters = ListForListBox(_selectemItemComboBox);
+                            // Metodo che riempie la ListBox
+                            _modelessForm.SetListBox();
+                            break;
+                        }
                     default:
                         {
                             // Una sorta di avviso qui dovrebbe informarci di una richiesta imprevista
@@ -121,7 +190,125 @@ namespace ModelessForm_ExternalEvent
         /// </remarks>
         /// <param name="uiapp">L'oggetto Applicazione di Revit</param>m>
         /// 
+        private void GetParameters(UIApplication uiapp)
+        {
+            UIDocument uidoc = uiapp.ActiveUIDocument;
+            Document doc = uidoc.Document;
 
+            List<Element> allElements = ElementFinder.FindAllElements(doc);
+            Dictionary<BuiltInParameterGroup, List<BuiltInParameter>> dict =
+                new Dictionary<BuiltInParameterGroup, List<BuiltInParameter>>();
+
+            foreach (Element e in allElements)
+            {
+                foreach (Parameter p in e.Parameters)
+                {
+                    if (p.IsShared)
+                        continue;
+                    if(p.Definition != null)
+                    {
+                        if (!dict.ContainsKey(p.Definition.ParameterGroup))
+                        {
+                            dict.Add(p.Definition.ParameterGroup, new List<BuiltInParameter>());
+                        }
+
+                        BuiltInParameter biParam = (p.Definition as InternalDefinition).BuiltInParameter;
+                        if (!dict[p.Definition.ParameterGroup].Contains(biParam))
+                        {
+                            dict[p.Definition.ParameterGroup].Add(biParam);
+                        }
+                    }
+                }
+            }
+
+            using (StreamWriter sw = new StreamWriter(_pathTxt))
+            {
+                int count = 1;
+                foreach (KeyValuePair<BuiltInParameterGroup, List<BuiltInParameter>> kvp in dict)
+                {
+                    sw.WriteLine(count + ". " + kvp.Key);
+                    foreach (BuiltInParameter v in kvp.Value)
+                    {
+                        sw.WriteLine(string.Format("        {0}", v));
+                    }
+                    count++;
+                }
+            }
+        }
+
+        /// <summary>
+        ///   Metodo per riempire la COMBOBOX
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// 
+        private void ValueForComboBox()
+        {
+            // Leggi il file .txt
+            string[] lines = System.IO.File.ReadAllLines(_pathTxt);
+
+            int count = 0;
+            foreach (var item in lines)
+            {
+                if (item.Contains(". "))
+                {
+                    _titles.Add(item);
+                    count++;
+                }
+                else
+                {
+                    _parameters.Add(new string[]
+                    {
+                        Convert.ToString(count),
+                        item.Trim()
+                    });
+                }
+            }
+            count = 0;
+
+            using (StreamWriter sw = new StreamWriter(_pathTxt2))
+            {
+                foreach (var item in _parameters)
+                {
+                    sw.WriteLine(item[0] + " - " + item[1]);
+                }
+            }
+        }
+
+        /// <summary>
+        ///   Metodo per riempire la LISTBOX
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// 
+        private ArrayList ListForListBox(string value)
+        {
+            ArrayList listParameters = new ArrayList();
+            
+            bool go = false;
+
+            string numberStr = value.Substring(0, value.IndexOf("."));
+
+            foreach (string[] par in _parameters)
+            {
+                if (par[0] == numberStr)
+                {
+                    go = true;
+                }
+
+                if (go == true && par[0] != numberStr)
+                {
+                    break;
+                }
+
+                if (go)
+                {
+                    listParameters.Add(par[1]);
+                }
+            }
+
+            return listParameters;
+        }
 
     }  // class
 

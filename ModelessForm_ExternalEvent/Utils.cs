@@ -23,7 +23,5 @@ namespace ModelessForm_ExternalEvent
             Debug.WriteLine(ex.Source);
             Debug.WriteLine(ex.StackTrace);
         }
-
-
     }
 }

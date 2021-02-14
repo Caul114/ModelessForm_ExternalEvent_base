@@ -31,10 +31,45 @@ namespace ModelessForm_ExternalEvent
         // In questo esempio, la finestra di dialogo possiede il gestore e gli oggetti evento, 
         // ma non è un requisito. Potrebbero anche essere proprietà statiche dell'applicazione.
 
+        #region Private data members
         private RequestHandler m_Handler;
         private ExternalEvent m_ExEvent;
-               
+        
+        // Dichiarazione della stringa dell'elemento scelto nella ComboBox
+        private string _elementSelectedComboBox = "";
 
+        // Dichiarazione dell'indice  dell'elemento scelto nella ComboBox
+        private int _indexSelectedComboBox = -1;
+        #endregion
+
+        #region Class public property
+        /// <summary>
+        /// Proprietà pubblica per accedere al valore della richiesta corrente
+        /// </summary>
+        public RequestHandler RequestHandler
+        {
+            get { return m_Handler; }
+        }
+
+        /// <summary>
+        /// Proprietà pubblica per accedere al valore della richiesta corrente
+        /// </summary>
+        public string ElementSelectedComboBox
+        {
+            get { return _elementSelectedComboBox; }
+        }
+
+        /// <summary>
+        /// Proprietà pubblica per accedere al valore della richiesta corrente
+        /// </summary>
+        public int IndexSelectedComboBox
+        {
+            get { return _indexSelectedComboBox; }
+        }
+
+        #endregion
+
+        #region Class public method
         /// <summary>
         ///   Costruttore della finestra di dialogo
         /// </summary>
@@ -44,7 +79,9 @@ namespace ModelessForm_ExternalEvent
             InitializeComponent();
             m_Handler = handler;
             m_ExEvent = exEvent;
+
         }
+        #endregion
 
         /// <summary>
         /// Modulo gestore eventi chiuso
@@ -122,7 +159,56 @@ namespace ModelessForm_ExternalEvent
         /// 
         private void ModelessForm_Load(object sender, EventArgs e)
         {
-        }  
+            // Operazioni iniziali
+            MakeRequest(RequestId.Initial);
+        }
+
+        /// <summary>
+        ///   Metodo per riempimento della ComboBox
+        /// </summary>
+        ///
+        public void SetComboBox()
+        {
+            List<string> listParameters = m_Handler.ValuesForComboBox;
+            foreach (string item in listParameters)
+            {
+                comboBox1.Items.Add(item);
+            }            
+        }
+
+        /// <summary>
+        ///   Metodo per catturare l'elemento scelto nella ComboBox
+        /// </summary>
+        ///
+        private void showSelectedButton_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //listBox1.DataSource = null;
+            MakeRequest(RequestId.ChangeComboBox);
+        }
+
+
+        /// <summary>
+        ///   Metodo per catturare l'elemento scelto nella ComboBox
+        /// </summary>
+        ///
+        public string GetComboBox()
+        {
+            _elementSelectedComboBox = comboBox1.SelectedItem as string;
+            _indexSelectedComboBox = comboBox1.SelectedIndex + 1;
+            comboBox1.Text = _elementSelectedComboBox;
+            return _elementSelectedComboBox;
+        }
+
+
+
+        /// <summary>
+        ///   Metodo che riempie il LISTBOX
+        /// </summary>
+        ///
+        public void SetListBox()
+        {
+            listBox1.DataSource = m_Handler.ListParameters;
+        }
 
         /// <summary>
         ///   Exit - chiude la finestra di dialogo

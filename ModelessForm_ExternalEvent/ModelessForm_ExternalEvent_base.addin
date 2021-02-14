@@ -8,7 +8,7 @@
 		<VendorId>BOLDstd</VendorId>
 		<VendorDescription>BOLDstd, http://boldstd.it/ </VendorDescription>
 	</AddIn>
-	<AddIn Type="Command">
+	<!--<AddIn Type="Command">
 		<Text>Command ModelessForm_ExternalEvent_base</Text>
 		<Description>Some description for ModelessForm_ExternalEvent</Description>
 		<Assembly>ModelessForm_ExternalEvent_base.dll</Assembly>
@@ -16,5 +16,5 @@
 		<ClientId>3E04EAD5-6F3D-4AAA-8297-3BCBD27E68A6</ClientId>
 		<VendorId>BOLDstd</VendorId>
 		<VendorDescription>BOLDstd, http://boldstd.it/ </VendorDescription>
-	</AddIn>	
+	</AddIn>-->	
 </RevitAddIns>

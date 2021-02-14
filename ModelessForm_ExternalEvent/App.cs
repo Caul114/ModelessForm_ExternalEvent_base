@@ -6,6 +6,7 @@ using Autodesk.Revit.UI;
 using Microsoft.Office.Interop;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -51,11 +52,29 @@ namespace ModelessForm_ExternalEvent
                 // ToolTip mostrato
                 button.ToolTip = "App base";
                 // Icona del Button
-                Uri uriImage = new Uri("C:\\DatiLDB\\Progetti_REVIT\\13.Winform\\ModelessForm_ExternalEvent - 2021\\ModelessForm_ExternalEvent\\Resources\\revit_small.png");
-                BitmapImage image = new BitmapImage(uriImage);
-                button.LargeImage = image;
+                button.Image = GetEmbeddedImage("ModelessForm_ExternalEvent.Resources.BOLDsft_16.png");
+                button.LargeImage = GetEmbeddedImage("ModelessForm_ExternalEvent.Resources.BOLDsft_32.png");
             };
             return Result.Succeeded;
+        }
+
+        /// <summary>
+        /// Implementa il caricamento dell'Immagine Embedded
+        /// </summary>
+        /// <param name="application">Percorso dell'immagine</param>
+        /// <returns></returns>
+        static BitmapSource GetEmbeddedImage(string name)
+        {
+            try
+            {
+                Assembly assemb = Assembly.GetExecutingAssembly();
+                Stream stre = assemb.GetManifestResourceStream(name);
+                return BitmapFrame.Create(stre);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -85,8 +104,7 @@ namespace ModelessForm_ExternalEvent
         {
             // If we do not have a dialog yet, create and show it
             if (m_MyForm == null || m_MyForm.IsDisposed)
-            {
-                
+            {                
                 // Un nuovo gestore per gestire l'invio delle richieste tramite la finestra di dialogo
                 RequestHandler handler = new RequestHandler();
 
@@ -146,7 +164,7 @@ namespace ModelessForm_ExternalEvent
         public RibbonPanel RibbonPanel(UIControlledApplication uiapp)
         {
             // Nome del Tab
-            string tab = "Bold";
+            string tab = "BOLD";
 
             // Dichiara e inizializza un RibbonPanel vuoto
             RibbonPanel ribbonPanel = null;
@@ -164,7 +182,7 @@ namespace ModelessForm_ExternalEvent
             // Prova a creare un RibbonPanel
             try
             {
-                RibbonPanel panel = uiapp.CreateRibbonPanel(tab, "Index");
+                RibbonPanel panel = uiapp.CreateRibbonPanel(tab, "Alpha");
             }
             catch (Exception ex)
             {
@@ -173,7 +191,7 @@ namespace ModelessForm_ExternalEvent
 
             // Verifica se il tab del Panel esiste gia'
             List<RibbonPanel> panels = uiapp.GetRibbonPanels(tab);
-            foreach (RibbonPanel p in panels.Where(x => x.Name == "Index"))
+            foreach (RibbonPanel p in panels.Where(x => x.Name == "Alpha"))
             {
                 ribbonPanel = p;
             }
